@@ -70,6 +70,7 @@ public class Term {
         boolean hasExponent = false;
         if(exponent_string.length() > 0) {
             hasExponent = true;
+            exponent_string = exponent_string.replaceAll("\\s","");
             exponent = Integer.parseInt(exponent_string);
         }
 
@@ -78,14 +79,15 @@ public class Term {
         boolean isFraction = false;
         if(numeric_string.length() > 0)
         {
-            if(numeric_string.indexOf('/') > 0) {
+            if(numeric_string.contains("/")) {
                 isFraction = true;
-                String[] numericals_string = numeric_string.split("/");
+                String[] numericals_string = numeric_string.split("\\/");
                 numericals[0] = Integer.parseInt(numericals_string[0]);
-                numericals[0] = Integer.parseInt(numericals_string[0]);
+                numericals[1] = Integer.parseInt(numericals_string[1]);
             }
             else
             {
+                numeric_string = numeric_string.replaceAll("\\s","");
                 numeric = Integer.parseInt(numeric_string);
             }
         }
@@ -107,12 +109,20 @@ public class Term {
                 numeric = exponent * numeric;
                 exponent = exponent - 1;
             }
-
+            else
+            {
+                numeric = exponent * numericals[0];
+                exponent = exponent - 1;
+            }
 
         }
 
         //Build new Term with variables given
-        term = Integer.toString(numeric) + Character.toString(var);
+        if(!isFraction) term = Integer.toString(numeric) + Character.toString(var);
+        else
+        {
+            term = Integer.toString(numeric) + "/" + numericals[1] + Character.toString(var);
+        }
         if(hasExponent && exponent != 1)
         {
             term += "^" + Integer.toString(exponent);
