@@ -58,19 +58,12 @@ public class Term {
 
         }
 
-
-
-
-
-
-
-
-
         //Assess the exponential term
         boolean hasExponent = false;
         if(exponent_string.length() > 0) {
             hasExponent = true;
             exponent_string = exponent_string.replaceAll("\\s","");
+            exponent_string = exponent_string.replaceAll("[()]","");
             exponent = Integer.parseInt(exponent_string);
         }
 
@@ -83,7 +76,51 @@ public class Term {
                 isFraction = true;
                 String[] numericals_string = numeric_string.split("\\/");
                 numericals[0] = Integer.parseInt(numericals_string[0]);
-                numericals[1] = Integer.parseInt(numericals_string[1]);
+
+                if(numericals_string[1].contains("("))
+                { // This means that the x is below the fraction
+                    numericals_string[1] = numericals_string[1].replaceAll("[()]","");
+
+                    //Return a custom value for this fraction
+                    String fractionx = numericals_string[1];
+                    if(hasExponent)
+                    {
+                        exponent = exponent * -1;
+                        numeric = Integer.parseInt(numericals_string[0]);
+                        int numeric_2 = Integer.parseInt(numericals_string[1]);
+
+                        numeric =  numeric * exponent;
+                        exponent -= 1;
+
+                        if(1 == 1) // For debugging
+                        {
+                            exponent = exponent * -1;
+                            term = Integer.toString(numeric) + "/" + Integer.toString(numeric_2) + Character.toString(var) + "^n" + Integer.toString(exponent);
+                            return term;
+                        }
+
+                        if(numeric%numeric_2 == 0)
+                        {
+                            numeric = numeric/numeric_2;
+                            numeric_2 = 1;
+                        }
+                        exponent = exponent * -1;
+                        if(numeric_2 == 1)
+                        {
+                            term = Integer.toString(numeric) + "/" + Character.toString(var) + "^" + Integer.toString(exponent);
+                        }
+                        else {
+                            term = Integer.toString(numeric) + "/" + Integer.toString(numeric_2) + Character.toString(var) + "^" + Integer.toString(exponent);
+                        }
+
+
+                    }
+
+                }
+                else
+                {
+                    numericals[1] = Integer.parseInt(numericals_string[1]);
+                }
             }
             else
             {
@@ -119,11 +156,21 @@ public class Term {
 
         //Build new Term with variables given
         if(!isFraction) term = Integer.toString(numeric) + Character.toString(var);
-        else
-        {
-            term = Integer.toString(numeric) + "/" + numericals[1] + Character.toString(var);
+        else {
+            if(numeric_string.contains("("))
+            {
+
+            }
+
+            if (numeric % numericals[1] == 0) {
+                numeric = numeric / numericals[1];
+                term = (numeric > 1) ? Integer.toString(numeric) + Character.toString(var) : Character.toString(var);
+
+            } else {
+                term = Integer.toString(numeric) + "/" + numericals[1] + Character.toString(var);
+            }
         }
-        if(hasExponent && exponent != 1)
+        if(hasExponent && exponent > 1)
         {
             term += "^" + Integer.toString(exponent);
         }

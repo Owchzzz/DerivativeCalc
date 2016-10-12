@@ -41,15 +41,13 @@ public class Derivatives {
             }
         }
 
-        if(1 == 1)
-        {
-            return finalTerm;
-        }
+
         //Simplification of Terms
         //Grouping all terms together
         this.terms = finalTerm.split("(?<=[-+])|(?=[-+])");
         for(int i = 0; i < this.terms.length; i++)
         {
+
             int key = 0;
             int value = 0;
 
@@ -58,6 +56,7 @@ public class Derivatives {
 
             if(! this.terms[i].contains("+") && ! this.terms[i].contains("-")) {
                 if (this.terms[i].contains("^")) {
+
                     String[] inTerms = this.terms[i].split("\\^");
                     System.out.println("inTerms array is: ");
                     System.out.println(Arrays.toString(inTerms));
