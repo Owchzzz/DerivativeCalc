@@ -27,6 +27,7 @@ public class Term {
         String exponent_string="";
 
         int[] numericals = new int[2];
+
         for( int i = 0; i < term.length(); i++)
         {
 
@@ -60,10 +61,11 @@ public class Term {
 
         //Assess the exponential term
         boolean hasExponent = false;
+        exponent_string = exponent_string.replaceAll("\\s","");
+        exponent_string = exponent_string.replaceAll("[()]","");
         if(exponent_string.length() > 0) {
             hasExponent = true;
-            exponent_string = exponent_string.replaceAll("\\s","");
-            exponent_string = exponent_string.replaceAll("[()]","");
+
             exponent = Integer.parseInt(exponent_string);
         }
 
@@ -83,21 +85,26 @@ public class Term {
 
                     //Return a custom value for this fraction
                     String fractionx = numericals_string[1];
-                    if(hasExponent)
-                    {
+                    if(hasExponent) {
                         exponent = exponent * -1;
+                    }
+                    else {
+                        exponent = -1;
+                    }
                         numeric = Integer.parseInt(numericals_string[0]);
                         int numeric_2 = Integer.parseInt(numericals_string[1]);
 
                         numeric =  numeric * exponent;
                         exponent -= 1;
-
+                        /*
                         if(1 == 1) // For debugging
                         {
                             exponent = exponent * -1;
                             term = Integer.toString(numeric) + "/" + Integer.toString(numeric_2) + Character.toString(var) + "^n" + Integer.toString(exponent);
+
                             return term;
                         }
+                        */
 
                         if(numeric%numeric_2 == 0)
                         {
@@ -112,9 +119,10 @@ public class Term {
                         else {
                             term = Integer.toString(numeric) + "/" + Integer.toString(numeric_2) + Character.toString(var) + "^" + Integer.toString(exponent);
                         }
+                        term = term.replaceAll("-","n");
+                        return term;
 
 
-                    }
 
                 }
                 else

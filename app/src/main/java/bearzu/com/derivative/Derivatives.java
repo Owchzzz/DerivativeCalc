@@ -18,7 +18,7 @@ public class Derivatives {
 
     private String[] terms;
 
-    Map<Integer,Integer> groupTerms = new TreeMap<Integer,Integer>();
+    Map<Integer,String> groupTerms = new TreeMap<Integer,String>();
     public Derivatives(String derivative) {
         this.derivative = derivative;
         this.derivative.replaceAll("\\s","");
@@ -51,9 +51,9 @@ public class Derivatives {
             int key = 0;
             int value = 0;
 
-            int val = 0;
-            int tempVal = 0;
-
+            String val = "0";
+            String tempVal = "0";
+            this.terms[i] = this.terms[i].replaceAll("n","-");
             if(! this.terms[i].contains("+") && ! this.terms[i].contains("-")) {
                 if (this.terms[i].contains("^")) {
 
@@ -63,7 +63,7 @@ public class Derivatives {
                     inTerms[0] = inTerms[0].replace("x", "");
                     System.out.println("Parsing ");
                     System.out.println(inTerms[0]);
-                    tempVal = Integer.parseInt(inTerms[0]);
+                    tempVal = inTerms[0];
 
                     System.out.println("Parsing ");
                     System.out.println(inTerms[1]);
@@ -75,20 +75,74 @@ public class Derivatives {
                     String defaultTerm = this.terms[i];
                     defaultTerm = defaultTerm.replaceAll("x", "");
                     if(! defaultTerm.equals(""))
-                        tempVal = Integer.parseInt(defaultTerm);
+                        tempVal = defaultTerm;
                 }
 
 
                 if (this.groupTerms.containsKey(key)) {
                     val = this.groupTerms.get(key);
                 }
+                /* Defunct negative value check
                 if (i > 0) {
                     if (this.terms[i - 1].contains("-")) {
-                        tempVal = tempVal * -1;
+                        tempVal = tempVal;
                     }
                 }
                 val = val + tempVal;
+                */
+                if(i > 0) {
+                    if (this.terms[i - 1].contains("-")) {
+                        tempVal = "-" + tempVal;
+                    }
+                }
+                if(val.contains("/") || tempVal.contains("/"))
+                { // Is a fraction now
+                    System.out.println("Fraction found");
+                    System.out.println(key);
+                    long numerator, denominator, Nnumerator,Ndenominator;
+                    long Rnumerator,Rdenominator;
+                    String[] originalfraction = new String[2];
+                    String[] newfraction = new String[2];
+                    String[] rawfraction;
 
+                    if(!val.contains("/"))
+                    {
+                        val += "/1";
+                    }
+
+                    if(!tempVal.contains("/"))
+                    {
+                        tempVal += "/1";
+                    }
+
+                    originalfraction = val.split("/");
+                    newfraction = tempVal.split("/");
+                    numerator = Long.parseLong(originalfraction[0]);
+                    denominator = Long.parseLong(originalfraction[1]);
+                    Nnumerator = Long.parseLong(newfraction[0]);
+                    Ndenominator = Long.parseLong(newfraction[1]);
+
+
+                    if(denominator == Ndenominator) {
+                        Rdenominator = denominator;
+                        Rnumerator = numerator + Nnumerator;
+                    }
+                    else { //Cross multiply
+                        Rnumerator = (numerator * Ndenominator) + (Nnumerator*denominator);
+                        Rdenominator = denominator * Ndenominator;
+                    }
+
+                    String ResultFraction = asFraction(Rnumerator,Rdenominator);
+                    ResultFraction = ResultFraction.replaceAll("/1","");
+                    System.out.println("Key: " + key + " Value: " +ResultFraction);
+                    val = ResultFraction;
+                }
+                else
+                {
+
+                    value = Integer.parseInt(val) + Integer.parseInt(tempVal);
+                    val = Integer.toString(value);
+                }
                 this.groupTerms.put(key, val);
             }
         }
@@ -99,7 +153,7 @@ public class Derivatives {
         {
 
             int exponent = (int) keys.get(i);
-            int intval = (int) this.groupTerms.get(exponent);
+            String intval = this.groupTerms.get(exponent);
             /*
             if(intval > 0 )
             {
@@ -115,17 +169,18 @@ public class Derivatives {
             */
             if(entries == 0)
             {
-                finalTerm += Integer.toString(intval);
+                finalTerm += intval;
             }
             else
             {
-                if(intval >= 0)
+                if(!intval.contains("-"))
                 {
-                    finalTerm += "+" + Integer.toString(intval);
+                    intval = intval.replaceAll("-","");
+                    finalTerm += "+" + intval;
                 }
                 else
                 {
-                    finalTerm += Integer.toString(intval);
+                    finalTerm += intval;
                 }
             }
             entries++;
@@ -133,6 +188,14 @@ public class Derivatives {
             {
                 finalTerm += "x";
                 if(exponent > 1) finalTerm += "^" + Integer.toString(exponent);
+                else
+                {
+                    if(exponent < 0)
+                    {
+                        finalTerm += "undefinedFraction:" + Integer.toString(exponent)  ;
+                    }
+
+                }
             }
         }
         return finalTerm;
@@ -141,9 +204,13 @@ public class Derivatives {
     }
 
 
-    public void assessTerms() {
-        for(int i = 0; i < this.terms.length; i++) {
+    /** @return the greatest common denominator */
+    public static long gcm(long a, long b) {
+        return b == 0 ? a : gcm(b, a % b); // Not bad for one line of code :)
+    }
 
-        }
+    public static String asFraction(long a, long b) {
+        long gcm = gcm(a, b);
+        return (a / gcm) + "/" + (b / gcm);
     }
 }
