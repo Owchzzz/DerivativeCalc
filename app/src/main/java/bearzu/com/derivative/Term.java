@@ -96,32 +96,9 @@ public class Term {
 
                         numeric =  numeric * exponent;
                         exponent -= 1;
-                        /*
-                        if(1 == 1) // For debugging
-                        {
-                            exponent = exponent * -1;
-                            term = Integer.toString(numeric) + "/" + Integer.toString(numeric_2) + Character.toString(var) + "^n" + Integer.toString(exponent);
-
-                            return term;
-                        }
-                        */
-
-                        if(numeric%numeric_2 == 0)
-                        {
-                            numeric = numeric/numeric_2;
-                            numeric_2 = 1;
-                        }
-                        exponent = exponent * -1;
-                        if(numeric_2 == 1)
-                        {
-                            term = Integer.toString(numeric) + "/" + Character.toString(var) + "^" + Integer.toString(exponent);
-                        }
-                        else {
-                            term = Integer.toString(numeric) + "/" + Integer.toString(numeric_2) + Character.toString(var) + "^" + Integer.toString(exponent);
-                        }
-                        term = term.replaceAll("-","n");
+                        exponent = exponent*-1;
+                        term = Integer.toString(numeric) +"/"+Integer.toString(numeric_2)+Character.toString(var)+"^n"+Integer.toString(exponent);
                         return term;
-
 
 
                 }
@@ -156,6 +133,7 @@ public class Term {
             }
             else
             {
+
                 numeric = exponent * numericals[0];
                 exponent = exponent - 1;
             }
